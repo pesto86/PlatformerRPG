@@ -1,5 +1,3 @@
-
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class EnemyAI : MonoBehaviour
@@ -29,8 +27,6 @@ public class EnemyAI : MonoBehaviour
 
     void Patrol()
     {
-        Vector2 currentPosition = transform.position;
-        Vector2 distanceFromAnchor = currentPosition - anchorPoint;
         movement.x = movementCounter >= 5 ? -1f : 1f;
         secondsPassed += Time.deltaTime;
         movementCounter = Mathf.FloorToInt(secondsPassed);
@@ -42,11 +38,6 @@ public class EnemyAI : MonoBehaviour
         }
         moveSpeed = patrolSpeed;
         rb.linearVelocity = new Vector2(movement.x * moveSpeed, rb.linearVelocityY);
-
-        if (distanceFromAnchor.x > 5 || distanceFromAnchor.x < -5)
-        {
-            Return();
-        }
 
     }
 
@@ -85,17 +76,27 @@ public class EnemyAI : MonoBehaviour
         {
             patrolActive = false;
             attackMode = true;
+            returnMode = false;
         }
     }
 
     void Return()
     {
         Debug.Log("Return has been called");
-        returnMode = true;
-        patrolActive = false;
-
+        movementCounter = 0;
+        secondsPassed = 0;
         Vector2 currentPosition = transform.position;
         Vector2 distanceFromAnchor = anchorPoint - currentPosition;
+        bool returnNeeded = false;
+
+        if (distanceFromAnchor.x > 0.1f || distanceFromAnchor.x < -0.1f)
+        {
+            returnNeeded = true;
+        }
+        else
+        {
+            returnNeeded = false;
+        }
 
         movement.x = Mathf.Sign(distanceFromAnchor.x);
 
@@ -103,7 +104,7 @@ public class EnemyAI : MonoBehaviour
 
         rb.linearVelocity = new Vector2(movement.x * moveSpeed, rb.linearVelocityY);
 
-        if (movement.x <= 0.1f || movement.x >= -0.1f )
+        if (returnNeeded == false)
         {
             returnMode = false;
             patrolActive = true;
@@ -115,8 +116,9 @@ public class EnemyAI : MonoBehaviour
     { 
         if (other.CompareTag("Player"))
         {
-            patrolActive = true;
+            patrolActive = false;
             attackMode = false;
+            returnMode = true;
         }
     }
 
