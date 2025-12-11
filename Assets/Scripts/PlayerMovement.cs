@@ -11,15 +11,15 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded = false;
     private bool isJumping = false;
     private float spaceCounter;
-    private bool spaceHeld = false;
     private float spaceCounterHeld;
     private float spaceCounterMax = 0.2f;
-    private float spaceMultiplier;
-    private float maxJumpForce = 5.8f;
-    private float minJumpForce = 5f;
+    private float t;
+    private float maxJumpForce = 7.5f;
+    private float minJumpForce = 7f;
 
 
-    Vector2 movement;
+    public Vector2 movement;
+    public Vector3 playerLocation;
 
     void Update()
     {
@@ -46,15 +46,15 @@ public class PlayerMovement : MonoBehaviour
         {
             spaceCounter += Time.deltaTime;
             spaceCounterHeld = Mathf.Min(spaceCounter, spaceCounterMax);
-            spaceMultiplier = spaceCounterHeld / spaceCounterMax;
+            t = spaceCounterHeld / spaceCounterMax;
 
-            float targetY = minJumpForce + spaceMultiplier * (maxJumpForce - minJumpForce);
+            float targetY = Mathf.Lerp(minJumpForce, maxJumpForce, t);
 
             if (rb.linearVelocityY < targetY)
             {
             rb.linearVelocity = new Vector2(rb.linearVelocityX, targetY);
             }
-            Debug.Log(targetY);
+            //Debug.Log(targetY);
         }
 
         if (spaceCounter >= spaceCounterMax)
@@ -64,7 +64,6 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetKeyUp("space"))
         {
-            spaceHeld = false;
             isJumping = false;
             spaceCounter = 0;
             Debug.Log("space key has been released");
@@ -110,5 +109,6 @@ public class PlayerMovement : MonoBehaviour
     {
         // Movement
         rb.linearVelocity = new Vector2(movement.x * moveSpeed, rb.linearVelocity.y);
+        playerLocation = new Vector3(rb.transform.position.x, rb.transform.position.y, 0);
     }
 }
