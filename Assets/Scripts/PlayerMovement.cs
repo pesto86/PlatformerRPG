@@ -14,8 +14,8 @@ public class PlayerMovement : MonoBehaviour
     private float spaceCounterHeld;
     private float spaceCounterMax = 0.2f;
     private float t;
-    private float maxJumpForce = 7.5f;
-    private float minJumpForce = 7f;
+    private float maxJumpForce = 9f;
+    private float minJumpForce = 8f;
 
 
     public Vector2 movement;
@@ -69,6 +69,9 @@ public class PlayerMovement : MonoBehaviour
             Debug.Log("space key has been released");
         }
 
+        rb.linearVelocity = new Vector2(movement.x * moveSpeed, rb.linearVelocity.y);
+        playerLocation = new Vector3(rb.transform.position.x, rb.transform.position.y, 0);
+
         
     }
 
@@ -108,7 +111,6 @@ public class PlayerMovement : MonoBehaviour
     void FixedUpdate()
     {
         // Movement
-        rb.linearVelocity = new Vector2(movement.x * moveSpeed, rb.linearVelocity.y);
-        playerLocation = new Vector3(rb.transform.position.x, rb.transform.position.y, 0);
+        
     }
 }
