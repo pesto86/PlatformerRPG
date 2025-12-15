@@ -17,6 +17,7 @@ public class EnemyAI : MonoBehaviour
     public bool returnMode;
     public bool attackMode;
     public bool playerPresent;
+    private float direction;
     private Vector2 anchorPoint;
     private bool canAttack = true;
     private Vector2 baseScale;
@@ -77,7 +78,7 @@ public class EnemyAI : MonoBehaviour
         if (canAttack)
         {
             canAttack = false;
-            StartCoroutine(AttackRoutine());
+            StartCoroutine(AttackRoutine()); 
         }
     }
     IEnumerator AttackRoutine()
@@ -136,14 +137,14 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    void Flip(int direction)
+    void Flip()
     {
-        
         transform.localScale = new Vector2(direction * baseScale.x, baseScale.y);
+        Debug.Log("Enemy did a flip");
     }
     void Update()
     {
-        float direction = Mathf.Sign(player.position.x - transform.position.x);
+        
 
         if (patrolActive == true)
         {
@@ -169,14 +170,11 @@ public class EnemyAI : MonoBehaviour
             Attack();
         }
 
-        if (transform.localScale.x > direction)
-        {
-            Flip(-1);
-        }
+        direction = Mathf.Sign(movement.x);
 
-        if (transform.localScale.x < direction)
+        if ((Mathf.Sign(transform.localScale.x) != direction) && movement.x != 0)
         {
-            Flip(1);
+            Flip();
         }
         
     }

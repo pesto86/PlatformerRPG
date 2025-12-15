@@ -16,10 +16,17 @@ public class PlayerMovement : MonoBehaviour
     private float t;
     private float maxJumpForce = 9f;
     private float minJumpForce = 8f;
-
+    private int jumpCounter;
+    private float direction;
+    private Vector2 baseScale;
 
     public Vector2 movement;
     public Vector3 playerLocation;
+
+    void Awake()
+    {
+        baseScale = transform.localScale;
+    }
 
     void Update()
     {
@@ -39,8 +46,21 @@ public class PlayerMovement : MonoBehaviour
             rb.linearVelocity = new Vector2(rb.linearVelocityX, minJumpForce);
             isJumping = true;
             spaceCounter = 0f;
-            
+            Debug.Log(jumpCounter);
+            // script for jumping - checks if player is grounded then adds 1 to jumpCounter
         }
+
+        else if (Input.GetKeyDown("space") && jumpCounter == 1)
+        {
+            rb.linearVelocity = new Vector2(rb.linearVelocityX, minJumpForce);
+            isJumping = true;
+            spaceCounter = 0f;
+            jumpCounter++;
+            Debug.Log(jumpCounter);
+            // script for double jump - checks if space is pressed and jumpCounter is 1 - then adds 1 to jumpCounter
+        }
+            
+        
 
         if (isJumping && Input.GetKey("space") && rb.linearVelocityY > 1f)
         {
@@ -63,16 +83,21 @@ public class PlayerMovement : MonoBehaviour
         }
 
         if (Input.GetKeyUp("space"))
-        {
-            isJumping = false;
-            spaceCounter = 0;
-            Debug.Log("space key has been released");
-        }
+            {
+                isJumping = false;
+                spaceCounter = 0;
+                Debug.Log("space key has been released");
+            }
 
         rb.linearVelocity = new Vector2(movement.x * moveSpeed, rb.linearVelocity.y);
         playerLocation = new Vector3(rb.transform.position.x, rb.transform.position.y, 0);
 
+        direction = Mathf.Sign(movement.x);
         
+        if ((Mathf.Sign(transform.localScale.x) != direction) && movement.x != 0)
+        {
+            Flip();
+        }
     }
 
    
@@ -88,6 +113,12 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         Debug.Log("Jump has been called");
     }
+    
+    void Flip()
+    {
+        Debug.Log("Player did a flip");
+        transform.localScale = new Vector2(direction * baseScale.x, baseScale.y);
+    }
 
     void OnCollisionEnter2D(Collision2D collision)
         {
@@ -95,7 +126,9 @@ public class PlayerMovement : MonoBehaviour
             {
                 isGrounded = true;
                 isJumping = false;
+                jumpCounter = 0;
                 Debug.Log("Player is grounded");
+                // jumpCounter set to 0 to allow double jump on the next jump
             }
         }
 
@@ -104,6 +137,7 @@ public class PlayerMovement : MonoBehaviour
         if (collision.collider.CompareTag("Ground"))
         {
             isGrounded = false;
+            jumpCounter++;
             Debug.Log("Player is NOT grounded");
         }
     }

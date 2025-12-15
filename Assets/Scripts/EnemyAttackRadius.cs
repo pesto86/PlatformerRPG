@@ -1,8 +1,10 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class EnemyAttackRadius : MonoBehaviour
 {
     public EnemyAI enemy;
+    public EnemyProfile enemyProfile;
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -12,6 +14,8 @@ public class EnemyAttackRadius : MonoBehaviour
             enemy.patrolActive = false;
             enemy.chargeMode = true;
             enemy.returnMode = false;
+
+            enemyProfile.playerInRange = true;
         }
     }
 
@@ -23,7 +27,11 @@ public class EnemyAttackRadius : MonoBehaviour
             enemy.patrolActive = false;
             enemy.chargeMode = false;
             enemy.returnMode = true;
+
+            enemyProfile.playerInRange = false;
         }
     }
+
+    
 
 }
