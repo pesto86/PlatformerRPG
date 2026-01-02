@@ -1,13 +1,16 @@
 using UnityEngine;
 using TMPro;
+using NUnit.Framework;
 
 public class PlayerManager : MonoBehaviour
 {
     public ParticleSystem bloodEffect;
     public PlayerHealth playerHealth;
+    public PlayerAttack playerAttack;
     public DialogueScript dialoguePanel;
     [SerializeField] private TextMeshProUGUI coinDisplay;
     public int playerMoney = 0;
+    public Inventory inventory;
     
     public void Damage(int damage)
     {
@@ -18,6 +21,7 @@ public class PlayerManager : MonoBehaviour
     void Awake()
     {
         UpdateMoneyDisplay(0);
+        inventory = new Inventory();
     }
 
     void Update()
@@ -32,6 +36,8 @@ public class PlayerManager : MonoBehaviour
         {
             dialoguePanel.SlideDown();
         }
+
+
         
     }
 
@@ -42,6 +48,7 @@ public class PlayerManager : MonoBehaviour
             Destroy(collision.gameObject);
             UpdateMoneyDisplay(1);
         }
+
     }
 
     void UpdateMoneyDisplay(int moneyValue)
@@ -49,5 +56,17 @@ public class PlayerManager : MonoBehaviour
         playerMoney += moneyValue;
         coinDisplay.text = "$" + playerMoney;
     }
+
+    public void AddItem(Items item) // the additem method which is called by pickup script
+    {
+        inventory.Add(item); // the add method on inventory which adds the item to this instance of inventory
+    }
+
+    public void UpdateDamage(int damage)
+    {
+        playerAttack.UpdateAttackDamage(damage);
+    }
+
+
 
 }

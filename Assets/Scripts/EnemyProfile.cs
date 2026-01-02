@@ -16,10 +16,14 @@ public class EnemyProfile : MonoBehaviour
     [SerializeField] private RectTransform enemyHealthUI;
     private Vector3 positionOffset = new(0, 1.5f, 0);
     public bool playerInRange;
+    private bool playerEncountered;
+    [SerializeField] private Slider healthSliderInstance;
     
     void Awake()
     {
-        healthSlider.gameObject.SetActive(false);
+        healthSliderInstance = Instantiate(healthSlider, enemyHealthUI);
+        SetMaxHealth();
+        healthSliderInstance.gameObject.SetActive(false);
         playerInRange = false;
     }
 
@@ -36,16 +40,25 @@ public class EnemyProfile : MonoBehaviour
                 Debug.Log("Loot dropped");
             }
             Destroy(gameObject);
+            Destroy(healthSliderInstance);
         }
 
-        if (playerInRange)
+        switch (playerInRange)
         {
-            healthSlider.gameObject.SetActive(true);
-        }
-
-        if (!playerInRange)
-        {
-            healthSlider.gameObject.SetActive(false);
+            case true when !playerEncountered:
+                playerEncountered = true;
+                healthSliderInstance.gameObject.SetActive(true);
+                SetHealth();
+                break;
+            
+            case false when playerEncountered:
+                healthSliderInstance.gameObject.SetActive(false);
+                break;
+            
+            case true when playerEncountered:
+                healthSliderInstance.gameObject.SetActive(true);
+                SetHealth();
+                break;
         }
 
 
@@ -58,20 +71,26 @@ public class EnemyProfile : MonoBehaviour
 
     public void SetMaxHealth()
     {
-        healthSlider.maxValue = maxHealth;
-        healthSlider.value = maxHealth;
+        healthSliderInstance.maxValue = maxHealth;
+        healthSliderInstance.value = maxHealth;
     }
 
     public void SetHealth()
     {
-        healthSlider.value = health;
+        healthSliderInstance.value = health;
+    }
+
+    public void SetHealthBarPosition()
+    {
+        RectTransform rect = healthSliderInstance.GetComponent<RectTransform>();
+        Vector3 worldPosition = enemyPosition.position + positionOffset;
+        Vector3 screenPosition = Camera.main.WorldToScreenPoint(worldPosition);
+        rect.position = screenPosition;
     }
 
     void LateUpdate()
     {
-        Vector3 worldPosition = enemyPosition.position + positionOffset;
-        Vector3 screenPosition = Camera.main.WorldToScreenPoint(worldPosition);
-        enemyHealthUI.position = screenPosition;
+        SetHealthBarPosition();
     }
 
 }

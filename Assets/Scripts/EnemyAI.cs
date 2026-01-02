@@ -99,8 +99,6 @@ public class EnemyAI : MonoBehaviour
 
     void Return()
     {
-        
-        Debug.Log("Return has been called");
         movementCounter = 0;
         secondsPassed = 0;
         Vector2 currentPosition = transform.position;
