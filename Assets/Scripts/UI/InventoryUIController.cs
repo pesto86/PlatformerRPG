@@ -7,15 +7,20 @@ public class InventoryUIController : MonoBehaviour
 {
     [SerializeField] private GameObject inventoryGrid;
     [SerializeField] private GameObject inventoryPanel;
+    [SerializeField] private GameObject itemPanel;
     [SerializeField] private GameObject itemIcon;
     [SerializeField] private PlayerManager playerManager;
     [SerializeField] private TextMeshProUGUI itemDescription;
+    [SerializeField] private TextMeshProUGUI itemName;
+    private InventorySlot currentSlot;
+    private bool itemVisible;
 
     public bool inventoryVisible = false;
 
     void Awake()
     {
         inventoryPanel.SetActive(false);
+        itemPanel.SetActive(false);
     } 
 
 
@@ -39,9 +44,52 @@ public class InventoryUIController : MonoBehaviour
         
     }
 
-    public void OnItemButton()
+    
+    public void ShowItemPanel()
     {
-        
+        itemPanel.SetActive(true);
+        itemVisible = true;
+    }
+
+    public void HideItemPanel()
+    {
+        itemPanel.SetActive(false);
+        itemVisible = false;
+    }
+
+    public void PopulateItemInfo(string itemNam, string itemDesc)
+    {
+        itemName.text = itemNam;
+        itemDescription.text = itemDesc;
+    }
+
+    public void ClearItemInfo()
+    {
+        itemName.text = "";
+        itemDescription.text = "";
+    }
+
+    public void OnSlotClicked(InventorySlot slot)
+    {
+        if (itemVisible == false)
+        {
+            ShowItemPanel();
+            PopulateItemInfo(slot.item.itemName, slot.item.itemDescription);
+            currentSlot = slot;
+        }
+
+        else if (itemVisible == true && slot == currentSlot)
+        {
+            ClearItemInfo();
+            HideItemPanel();
+            currentSlot = null;
+        }
+
+        else if (itemVisible == true && slot != currentSlot)
+        {
+            PopulateItemInfo(slot.item.itemName, slot.item.itemDescription);
+            currentSlot = slot;
+        }
     }
 
     public void PopulateInventory()
@@ -54,6 +102,7 @@ public class InventoryUIController : MonoBehaviour
             {
                 GameObject itemIconInstance = Instantiate(itemIcon, inventoryGrid.transform);
                 itemIconInstance.GetComponent<Image>().sprite = item.sprite;
+                itemIconInstance.GetComponent<InventorySlot>().item = item;
                 itemIconInstance.GetComponentInChildren<TextMeshProUGUI>().text = $"x{itemCount}";
             }
             
@@ -61,6 +110,7 @@ public class InventoryUIController : MonoBehaviour
             {
                 GameObject itemIconInstance = Instantiate(itemIcon, inventoryGrid.transform);
                 itemIconInstance.GetComponent<Image>().sprite = item.sprite;
+                itemIconInstance.GetComponent<InventorySlot>().item = item;
                 displayedItems.Add(item);
                 itemIconInstance.GetComponentInChildren<TextMeshProUGUI>().text = $"x{itemCount}";
                 Debug.Log($"There are {itemCount} {item.itemName}s");

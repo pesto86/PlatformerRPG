@@ -11,6 +11,7 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI coinDisplay;
     public int playerMoney = 0;
     public Inventory inventory;
+    [SerializeField] private InventoryUIController inventoryController;
     
     public void Damage(int damage)
     {
@@ -60,6 +61,12 @@ public class PlayerManager : MonoBehaviour
     public void AddItem(Items item) // the additem method which is called by pickup script
     {
         inventory.Add(item); // the add method on inventory which adds the item to this instance of inventory
+        if (inventoryController.inventoryVisible)
+        {
+            inventoryController.ClearInventory();
+            inventoryController.PopulateInventory();
+        }
+        
     }
 
     public void UpdateDamage(int damage)
