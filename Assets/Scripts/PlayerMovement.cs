@@ -2,26 +2,33 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    public float moveSpeed = 3f;
+    [Header("Components")]
     public Rigidbody2D rb;
     public Animator animator;
-    private float jumpForce;
+
+    [Header("Movement Settings")]
+    public float moveSpeed = 3f;
+    public Vector2 movement;
+    public Vector3 playerLocation;
+
+    [Header("Jump Settings")]
     public float defaultJumpForce = 2f;
+    private float jumpForce;
+    private float spaceCounterMax = 0.2f;
+    private float maxJumpForce = 9f;
+    private float minJumpForce = 8f;
+
+    [Header("Jump State")]
     private bool isGrounded = false;
     private bool isJumping = false;
     private float spaceCounter;
     private float spaceCounterHeld;
-    private float spaceCounterMax = 0.2f;
     private float t;
-    private float maxJumpForce = 9f;
-    private float minJumpForce = 8f;
     private int jumpCounter;
+
+    [Header("Internal State")]
     private float direction;
     private Vector2 baseScale;
-
-    public Vector2 movement;
-    public Vector3 playerLocation;
 
     void Awake()
     {

@@ -3,21 +3,28 @@ using UnityEngine.UI;
 
 public class EnemyProfile : MonoBehaviour
 {
+    [Header("Stats")]
     public int attackDamage = 10;
     public int health = 20;
     public int maxHealth = 20;
     public ParticleSystem enemyBloodEffect;
-    private Vector2 lootPosition;
+
+    [Header("Loot")]
     [SerializeField] GameObject coin;
+    private Vector2 lootPosition;
     int coinNumber;
-    private bool isDead = false;
+
+    [Header("Health UI")]
     public Slider healthSlider;
     [SerializeField] private Transform enemyPosition;
     [SerializeField] private RectTransform enemyHealthUI;
     private Vector3 positionOffset = new(0, 1.5f, 0);
+    [SerializeField] private Slider healthSliderInstance;
+
+    [Header("State")]
     public bool playerInRange;
     private bool playerEncountered;
-    [SerializeField] private Slider healthSliderInstance;
+    private bool isDead = false;
     
     void Awake()
     {

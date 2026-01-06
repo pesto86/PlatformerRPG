@@ -3,23 +3,33 @@ using UnityEngine;
 
 public class EnemyAI : MonoBehaviour
 {
+    [Header("Components")]
     public Rigidbody2D rb;
     public Transform player;
     public CapsuleCollider2D attackHitBox;
+    [SerializeField] private Animator animator;
+
+    [Header("Movement Settings")]
     public float moveSpeed;
     public float patrolSpeed = 1f;
     public float attackSpeed = 2f;
-    private Vector2 movement;
-    public bool patrolActive = true;
+
+    [Header("Patrol Timing")]
     public float secondsPassed;
     public int movementCounter;
+
+    [Header("State Flags")]
+    public bool patrolActive = true;
     public bool chargeMode;
     public bool returnMode;
     public bool attackMode;
     public bool playerPresent;
+    private bool canAttack = true;
+
+    [Header("Internal State")]
+    private Vector2 movement;
     private float direction;
     private Vector2 anchorPoint;
-    private bool canAttack = true;
     private Vector2 baseScale;
 
     void Start()
@@ -32,7 +42,6 @@ public class EnemyAI : MonoBehaviour
     void Patrol()
     {
         
-
         movement.x = movementCounter >= 4 ? -1f : 1f;
         secondsPassed += Time.deltaTime;
         movementCounter = Mathf.FloorToInt(secondsPassed);
@@ -50,7 +59,6 @@ public class EnemyAI : MonoBehaviour
     void Charge()
     {
         
-
         float distance = player.position.x - transform.position.x;
         float attackDirection = Mathf.Sign(player.position.x - transform.position.x);
         
@@ -70,7 +78,6 @@ public class EnemyAI : MonoBehaviour
         moveSpeed = attackSpeed;
         rb.linearVelocity = new Vector2(movement.x * moveSpeed, rb.linearVelocityY);
     
-    
     }
 
     public void Attack()
@@ -83,19 +90,26 @@ public class EnemyAI : MonoBehaviour
     }
     IEnumerator AttackRoutine()
     {
+        yield return new WaitForSeconds(0.7f);
+        
         attackHitBox.enabled = true;
 
         yield return new WaitForSeconds(0.2f);
 
         attackHitBox.enabled = false;
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.2f);
+
+        attackHitBox.enabled = true;
+
+        yield return new WaitForSeconds(0.2f);
+
+        attackHitBox.enabled = false;
+
+        yield return new WaitForSeconds(0.3f);
 
         canAttack = true;
     }
-            
-    
-    
 
     void Return()
     {
@@ -147,12 +161,14 @@ public class EnemyAI : MonoBehaviour
         if (patrolActive == true)
         {
             Patrol();
+            
             // Debug.Log("Patrol mode active");
         }
 
         if (chargeMode == true)
         {
             Charge();
+            
             //Debug.Log("Charge mode active");
         }
 
@@ -161,11 +177,13 @@ public class EnemyAI : MonoBehaviour
         if (returnMode == true)
         {
             Return();
+            
         }
 
         if (attackMode && canAttack)
         {
             Attack();
+            
         }
 
         direction = Mathf.Sign(movement.x);
@@ -174,7 +192,17 @@ public class EnemyAI : MonoBehaviour
         {
             Flip();
         }
-        
+
+        if (movement.x < 0.1 && attackMode == true)
+        {
+            animator.SetBool("isAttacking", true);
+        }
+
+        if (!playerPresent)
+        {
+            animator.SetBool("isAttacking", false);
+        }
+
     }
 
 }

@@ -5,6 +5,7 @@ using TMPro;
 
 public class InventoryUIController : MonoBehaviour
 {
+    [Header("UI References")]
     [SerializeField] private GameObject inventoryGrid;
     [SerializeField] private GameObject inventoryPanel;
     [SerializeField] private GameObject itemPanel;
@@ -12,10 +13,11 @@ public class InventoryUIController : MonoBehaviour
     [SerializeField] private PlayerManager playerManager;
     [SerializeField] private TextMeshProUGUI itemDescription;
     [SerializeField] private TextMeshProUGUI itemName;
-    private InventorySlot currentSlot;
-    private bool itemVisible;
 
+    [Header("State")]
     public bool inventoryVisible = false;
+    private InventorySlot currentSlot;
+    private bool itemVisible = false;
 
     void Awake()
     {
@@ -30,6 +32,7 @@ public class InventoryUIController : MonoBehaviour
         {
             case true:
                 ClearInventory();
+                HideItemPanel();
                 inventoryPanel.SetActive(false);
                 inventoryVisible = false;
                 break;

@@ -4,14 +4,20 @@ using NUnit.Framework;
 
 public class PlayerManager : MonoBehaviour
 {
+    [Header("Components")]
     public ParticleSystem bloodEffect;
     public PlayerHealth playerHealth;
     public PlayerAttack playerAttack;
     public DialogueScript dialoguePanel;
     [SerializeField] private TextMeshProUGUI coinDisplay;
+    [SerializeField] private InventoryUIController inventoryController;
+
+    [Header("Player Data")]
     public int playerMoney = 0;
     public Inventory inventory;
-    [SerializeField] private InventoryUIController inventoryController;
+
+    [Header("State")]
+    private string playerState;
     
     public void Damage(int damage)
     {
@@ -27,18 +33,22 @@ public class PlayerManager : MonoBehaviour
 
     void Update()
     {
-        
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            dialoguePanel.SlideUp();
-        }
 
         if (Input.GetKeyDown(KeyCode.Q))
         {
             dialoguePanel.SlideDown();
         }
 
+        switch (playerState)
+        {
+            case "inDialogue":
 
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    dialoguePanel.AdvanceDialogue();
+                }
+                break;
+        }
         
     }
 
@@ -74,6 +84,9 @@ public class PlayerManager : MonoBehaviour
         playerAttack.UpdateAttackDamage(damage);
     }
 
-
+    public void InDialogue()
+    {
+        playerState = "inDialogue";
+    }
 
 }
