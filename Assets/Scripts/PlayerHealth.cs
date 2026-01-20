@@ -10,7 +10,6 @@ public class PlayerHealth : MonoBehaviour
     public void OnDamageTaken(int damage)
     {
         currentHealth -= damage;
-        Debug.Log($"Player has {currentHealth}HP remaining");
         UpdateHealthDisplay();
     }
 

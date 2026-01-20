@@ -1,6 +1,5 @@
 using UnityEngine;
 using TMPro;
-using NUnit.Framework;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -10,14 +9,19 @@ public class PlayerManager : MonoBehaviour
     public PlayerAttack playerAttack;
     public DialogueScript dialoguePanel;
     [SerializeField] private TextMeshProUGUI coinDisplay;
+    [SerializeField] private TextMeshProUGUI promptDisplay;
+    [SerializeField] private TextMeshProUGUI promptInstance;
     [SerializeField] private InventoryUIController inventoryController;
+    [SerializeField] private RectTransform promptPosition;
+    [SerializeField] private Transform playerPosition;
+    private Vector3 positionOffset = new(0, 1.5f, 0);
 
     [Header("Player Data")]
     public int playerMoney = 0;
     public Inventory inventory;
 
     [Header("State")]
-    private string playerState;
+    public string playerState;
     
     public void Damage(int damage)
     {
@@ -29,10 +33,19 @@ public class PlayerManager : MonoBehaviour
     {
         UpdateMoneyDisplay(0);
         inventory = new Inventory();
+
+        promptInstance = Instantiate(promptDisplay, promptPosition);
+        promptInstance.gameObject.SetActive(false); 
+    }
+
+    void LateUpdate()
+    {
+        
     }
 
     void Update()
     {
+        SetPromptPosition();
 
         if (Input.GetKeyDown(KeyCode.Q))
         {
@@ -41,12 +54,21 @@ public class PlayerManager : MonoBehaviour
 
         switch (playerState)
         {
+            case "inRangeOfInteraction":
+                promptInstance.gameObject.SetActive(true); 
+                
+                break;
+
             case "inDialogue":
 
-                if (Input.GetKeyDown(KeyCode.E))
-                {
-                    dialoguePanel.AdvanceDialogue();
-                }
+                promptInstance.gameObject.SetActive(false); 
+                
+                break;
+
+            case "!inRangeOfInteraction":
+
+                promptInstance.gameObject.SetActive(false); 
+
                 break;
         }
         
@@ -62,10 +84,15 @@ public class PlayerManager : MonoBehaviour
 
     }
 
-    void UpdateMoneyDisplay(int moneyValue)
+    public void UpdateMoneyDisplay(int moneyValue)
     {
         playerMoney += moneyValue;
         coinDisplay.text = "$" + playerMoney;
+    }
+
+    public void DisplayPrompt()
+    {
+        promptDisplay.text = "Press E"; // change this to setActive
     }
 
     public void AddItem(Items item) // the additem method which is called by pickup script
@@ -87,6 +114,26 @@ public class PlayerManager : MonoBehaviour
     public void InDialogue()
     {
         playerState = "inDialogue";
+    }
+
+    public void InRangeOfInteraction()
+    {
+        playerState = "inRangeOfInteraction";
+    }
+
+    public void NotInRangeOfInteraction()
+    {
+        playerState = "!inRangeOfInteraction";
+        dialoguePanel.ClearDialogue();
+        dialoguePanel.SlideDown();
+    }
+
+    public void SetPromptPosition()
+    {
+        RectTransform rect = promptInstance.GetComponent<RectTransform>();
+        Vector3 worldPosition = playerPosition.position + positionOffset;
+        Vector3 screenPosition = Camera.main.WorldToScreenPoint(worldPosition);
+        rect.position = screenPosition;
     }
 
 }

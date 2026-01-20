@@ -152,7 +152,7 @@ public class EnemyAI : MonoBehaviour
     void Flip()
     {
         transform.localScale = new Vector2(direction * baseScale.x, baseScale.y);
-        Debug.Log("Enemy did a flip");
+        
     }
     void Update()
     {

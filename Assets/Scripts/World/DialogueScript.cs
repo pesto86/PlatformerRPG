@@ -33,15 +33,14 @@ public class DialogueScript : MonoBehaviour
         panelRect.DOAnchorPos(hiddenPosition, slideDuration).SetEase(Ease.Linear);
     }
 
-    public void SetDialogue(string dialogue, Sprite sprite)
+    public void SetDialogue(string dialogue)
     {
         panelText.text = dialogue;
-        panelImage.sprite = sprite;
     }
 
-    public void AdvanceDialogue()
+    public void ClearDialogue()
     {
-        
+        panelText.text = null;
     }
 
 }
